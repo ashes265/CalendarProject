@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Calendar List</title>
+    <style>
+        table thead th {
+            padding: 20px;
+        }
+
+        table tbody tr td {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Nội dung Dropdown */
+        .noidung_dropdown {
+            /*Ẩn nội dung các đường dẫn*/
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            right: 0;
+        }
+
+        /* Thiết kế style cho các đường dẫn trong Dropdown */
+        .noidung_dropdown a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        /* thay đổi màu background khi hover vào đường dẫn */
+        .noidung_dropdown a:hover {
+            background-color: #ddd;
+        }
+
+        /* hiển thị nội dung dropdown khi hover */
+        .dropdown:hover .noidung_dropdown {
+            display: block;
+        }
+
+        /* Thay đổi màu background cho nút khi được hover */
+        .dropdown:hover .nut_dropdown {
+            background-color: #00bfff;
+        }
+
+        ion-icon:hover {
+            background-color: #00bfff;
+            border-radius: 50%;
+        }
+
+        .filter div {
+            padding: 20px 0;
+        }
+    </style>
+    <script th:inline="javascript">
+        function sendDelete(url) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("DELETE", url, true);
+            xhttp.onload = function () {
+                let responseURL = xhttp.responseURL;
+                console.log("Redirecting to:", responseURL);
+                window.location.replace(responseURL);
+            };
+            xhttp.send();
+        }
+    </script>
+</head>
+
+<body style="margin: 0;">
+<div class="header" style="
+    background-color: #b77e7e;
+    height: 50px;
+    position: fixed;
+    top: 0;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    ">
+    <div class="logo" style="margin: auto 0;padding-left: 20px;display: flex;">
+        <img src="https://cdn3.vectorstock.com/i/1000x1000/43/92/gps-icon-logo-design-map-pointer-icon-pin-vector-26674392.jpg"
+             style="width: 35px;
+            height: 35px;border-radius: 50%;">
+        <div style="margin: auto auto 0 auto;
+            padding-left: 10px;font-style: italic;
+    font-size: 18px;">
+           Event Creation Website
+        </div>
+    </div>
+<!--    <div th:if="${account!=null}" class="account" style="margin: auto 0;padding-right: 20px;display: flex;">-->
+<!--        <div class="dropdown">-->
+<!--            <a class="forDrop" href="#">-->
+<!--                <ion-icon name="person" style="font-size: 32px;color: #dddddd;"></ion-icon>-->
+<!--            </a>-->
+<!--            <div class="noidung_dropdown">-->
+<!--                <a href="#">Đường Dẫn 1</a>-->
+<!--                <a href="#">Đường Dẫn 2</a>-->
+<!--                <a th:href="@{/users/logout}">Logout</a>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div style="margin: auto 0;" th:text="${account.username}">-->
+<!--        </div>-->
+<!--    </div>-->
+
+
+    <div sec:authorize="isAuthenticated()" class="account" style="margin: auto 0;padding-right: 20px;display: flex;">
+        <div class="dropdown">
+            <a class="forDrop" href="#">
+                <ion-icon name="person" style="font-size: 32px;color: #dddddd;"></ion-icon>
+            </a>
+            <div class="noidung_dropdown">
+                <a href="#">Đường Dẫn 1</a>
+                <a href="#">Đường Dẫn 2</a>
+                <a th:href="@{/users/logout}">Logout</a>
+            </div>
+        </div>
+        <div style="margin: auto 0;" >
+            <span sec:authentication="name"></span>
+        </div>
+    </div>
+
+</div>
+<div class="container" style="
+        margin-top: 50px;
+    ">
+    <div class="menu" style="width: 60%;
+        display: flex;
+        justify-content: space-between;
+        margin: auto;">
+        <h3 style="padding: 10px;">List Events</h3>
+        <!-- <button style="margin: auto 0;padding: 5px 10px;font-size: 15px;">Tạo sự kiện</button> -->
+        <a th:href="@{/calendars/create}" style="margin: auto 0;
+            font-size: 16px;
+            text-decoration: none;
+            border: 1px solid black;
+            border-radius: 8px;
+            padding: 10px;
+            font-weight: bolder;
+            color: cadetblue;
+            font-style: italic;">Create new event</a>
+    </div>
+    <div style="display: flex;width: 90%;margin: auto;">
+        <form class="filter" th:action="@{/calendars}" style="width: 15%;">
+            <div style="width: 80%;">
+                Type Event:
+<!--                <select >-->
+<!--                    <option>Tất cả</option>-->
+<!--                    <option>Công nghệ</option>-->
+<!--                </select>-->
+                <input th:if="${type==null}" name="type" type="text" style="width: 100%;"/>
+                <input th:if="${type!=null}" name="type" type="text" th:value="${type}" style="width: 100%;"/>
+            </div>
+            <div style="width: 80%;">
+                Location:
+<!--                <select name="location">-->
+<!--                    <option>Tất cả</option>-->
+<!--                    <option>Ha Noi</option>-->
+<!--                </select>-->
+                <input th:if="${location==null}" type="text" name="location"/>
+                <input th:if="${location!=null}" type="text" th:value="${location}" name="location"/>
+            </div>
+            <div style="width: 80%;">
+                Title:<br/>
+                <input th:if="${title==null}" name="title" type="text" style="width: 100%;"/>
+                <input th:if="${title!=null}" name="title" type="text" th:value="${title}" style="width: 100%;"/>
+            </div>
+            <div style="width: 80%;">
+                Owner: <br/>
+                <input th:if="${owner==null}" name="owner" type="text" style="width: 100%;"/>
+                <input th:if="${owner!=null}" name="owner" type="text" th:value="${owner}" style="width: 100%;"/>
+            </div>
+            <div style="width: 80%;">
+                Sort decreasing by:
+                <select name="sort" style="width: 100%;">
+                    <option th:value="createddate" th:selected="${sort}==createddate">Created date</option>
+                    <option th:value="starttime" th:selected="${sort}==starttime">Start time</option>
+                    <option th:value="endtime" th:selected="${sort}==endtime">End time</option>
+                </select>
+            </div>
+            <div style="text-align: center;">
+                <button style="width: 80%;padding:10px 0;">Filter</button>
+            </div>
+
+        </form>
+        <div style="width: 85%">
+            <div th:if="${message != null}">
+                <h3 th:text="${message}"></h3>
+            </div>
+            <table border="1" style="margin: auto;border-collapse:collapse;border:1px solid black;">
+                <thead>
+                <th>Title</th>
+                <th>Short Description</th>
+                <th>Type</th>
+                <th>Created</th>
+                <th>Published</th>
+                <th>Location</th>
+                <th>Start at</th>
+                <th>End</th>
+                <th>Owner</th>
+                <th>Action</th>
+                </thead>
+                <tbody>
+                <tr th:each="item:${listCalendar.content}">
+                    <td><a th:href="@{'/calendars/detail/'+${item.id}}" th:text="${item.title}"></a></td>
+                    <td th:text="${item.shortmsg}"></td>
+                    <td th:text="${item.type}"></td>
+                    <td th:text="${#dates.format(item.createddate,'dd-MM-yyyy')}"/>
+                    <td th:text="${#dates.format(item.updateddate,'dd-MM-yyyy')}"></td>
+                    <td th:text="${item.location}"/>
+                    <td th:text="${item.starttime}"/>
+                    <td th:text="${item.endtime}"/>
+                    <td th:text="${item.owner}"></td>
+                    <td>
+                        <a th:href="@{'/calendars/update/'+${item.id}}">Update</a>
+                        /
+                        <a th:href="@{'/calendars/delete/'+${item.id}}">Delete</a>
+<!--                        <a  type="button" th:with="url = @{'/calendars/delete/'+${item.id}}" th:onclick="sendDelete([[${url}]])">Delete</a>-->
+
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div th:if="${listCalendar.totalPages>1}">
+                <form th:action="@{/calendars}" class="paging" style="text-align: center;padding:20px">
+                <span th:each="i : ${#numbers.sequence(0,listCalendar.totalPages-1)}">
+                    <a th:href="@{/calendars(page=${i},size=${listCalendar.size}, sort=${sort})}"
+                       th:text="${i+1}"
+                    ></a>
+                    <!--                    <button th:value="${i+1}+',size='${listCalendar.size}+',sort='+${sort}" name="page" th:text="${i+1}"></button>-->
+                </span>
+                </form>
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+<div class="footer" style="
+        text-align: center;
+    background-color: #e2e2f1;
+    margin: auto;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    ">
+    End Page
+</div>
+
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</body>
+
+</html>

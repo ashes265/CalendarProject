@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Create an account</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link href="/css/common.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container">
+
+    <form method="post" class="form-signin" th:object="${userForm}" th:action="@{/users/register}">
+        <h2 class="form-signin-heading text-center text-primary">Create your account</h2>
+        <div class="form-group">
+            <input type="text" th:field="*{username}" class="form-control" placeholder="Username"
+                   autofocus="true">
+        </div>
+
+        <div class="form-group">
+            <input type="password" th:field="*{password}" class="form-control" placeholder="Password">
+        </div>
+
+        <div class="form-group">
+            <input type="text" th:field="*{email}" class="form-control" placeholder="Email">
+        </div>
+        <div>
+            <ul style="list-style: none">
+                <li th:each="item:${roles}">
+                    <input th:field="*{roles}" th:type="checkbox" th:value="${item.id}" th:name="roles" th:text="${item.position}"/>
+                </li>
+            </ul>
+
+        </div>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+    </form>
+
+</div>
+</body>
+</html>

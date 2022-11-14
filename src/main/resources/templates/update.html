@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Update</title>
+    <style>
+        table thead th {
+            padding: 20px;
+        }
+
+        table tbody tr td {
+            padding: 20px;
+            text-align: left;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Nội dung Dropdown */
+        .noidung_dropdown {
+            /*Ẩn nội dung các đường dẫn*/
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            right: 0;
+        }
+
+        /* Thiết kế style cho các đường dẫn trong Dropdown */
+        .noidung_dropdown a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        /* thay đổi màu background khi hover vào đường dẫn */
+        .noidung_dropdown a:hover {
+            background-color: #ddd;
+        }
+
+        /* hiển thị nội dung dropdown khi hover */
+        .dropdown:hover .noidung_dropdown {
+            display: block;
+        }
+
+        /* Thay đổi màu background cho nút khi được hover */
+        .dropdown:hover .nut_dropdown {
+            background-color: #00bfff;
+        }
+
+        ion-icon:hover {
+            background-color: #00bfff;
+            border-radius: 50%;
+        }
+
+        .filter div {
+            padding: 20px 0;
+        }
+    </style>
+</head>
+
+<body style="margin: 0;">
+<div class="header" style="
+    background-color: #b77e7e;
+    height: 50px;
+    position: fixed;
+    top: 0;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    ">
+    <div class="logo" style="margin: auto 0;padding-left: 20px;display: flex;">
+        <img src="https://cdn3.vectorstock.com/i/1000x1000/43/92/gps-icon-logo-design-map-pointer-icon-pin-vector-26674392.jpg"
+             style="width: 35px;
+            height: 35px;">
+        <div style="margin: auto auto 0 auto;
+            padding-left: 10px;font-style: italic;
+    font-size: 18px;">
+            Trang Web Tạo Event
+        </div>
+    </div>
+    <div sec:authorize="isAuthenticated()" class="account" style="margin: auto 0;padding-right: 20px;display: flex;">
+        <div class="dropdown">
+            <a class="forDrop" href="#">
+                <ion-icon name="person" style="font-size: 32px;color: #dddddd;"></ion-icon>
+            </a>
+            <div class="noidung_dropdown">
+                <a href="#">Đường Dẫn 1</a>
+                <a href="#">Đường Dẫn 2</a>
+                <a th:href="@{/logout}">Logout</a>
+            </div>
+        </div>
+        <div style="margin: auto 0;" >
+            <span sec:authentication="name"></span>
+        </div>
+    </div>
+</div>
+<div class="container" style="margin-top: 50px;">
+    <div class="menu" style="width: 60%;
+        display: flex;
+        justify-content: space-between;
+        margin: auto;">
+        <a th:href="@{/calendars}" style="margin: auto 0;
+            font-size: 20px;
+            text-decoration: none;
+            border: 1px solid black;
+            border-radius: 8px;
+            font-style: italic;
+            font-weight: bolder;
+            padding: 10px;
+            margin-top: 20px;">Danh sách sự kiện</a>
+    </div>
+    <div class="create">
+        <form style="width: 50%;
+            margin: 20px auto;
+            box-shadow: 0 2px 20px 2px #bdadad;
+            border-radius: 10px;
+        "
+              th:action="@{/calendars/save}" method="post" th:object="${calendar}"
+        >
+            <h2 style="text-align: center;
+                font-style: italic;
+                padding: 10px 0;">Tạo mới sự kiện</h2>
+            <table style="width: 80%;margin: auto;">
+                <input th:field="*{id}" type="hidden">
+                <tr>
+                    <td style="width: 30%;">Tên sự kiện</td>
+                    <td style="width: 70%;">
+                        <input th:field="*{title}" type="text" style="width: 100%;"/>
+                        <span style="color: red;font-style: italic" th:if="${#fields.hasErrors('title')}"
+                              th:errors="*{title}"
+                              th:class="${#fields.hasErrors('title')}?error"
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 30%;">Mô tả ngắn gọn</td>
+                    <td style="width: 70%;">
+                        <input th:field="*{shortmsg}" type="text" style="width: 100%;"/>
+                        <span style="color: red;font-style: italic" th:if="${#fields.hasErrors('shortmsg')}"
+                              th:errors="*{shortmsg}"
+                              th:class="${#fields.hasErrors('shortmsg')}?error"
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 30%;display: block;">Mô tả</td>
+                    <td style="width: 70%;">
+                        <textarea style="width: 100%;height: 200px;" th:field="*{fullmsg}"></textarea>
+                        <span style="color: red;font-style: italic" th:if="${#fields.hasErrors('fullmsg')}"
+                              th:errors="*{fullmsg}"
+                              th:class="${#fields.hasErrors('fullmsg')}?error"
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 30%;">Loại sự kiện</td>
+                    <td style="width: 70%;">
+                        <!--            <select style="width: 100%;">-->
+                        <!--              <option>Technology</option>-->
+                        <!--              <option>Enviroment</option>-->
+                        <!--            </select>-->
+                        <input th:field="*{type}" type="text" style="width: 100%;"/>
+                        <span style="color: red;font-style: italic" th:if="${#fields.hasErrors('type')}"
+                              th:errors="*{type}"
+                              th:class="${#fields.hasErrors('type')}?error"
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 30%;">Địa điểm</td>
+                    <td style="width: 70%;">
+                        <input th:field="*{location}" type="text" style="width: 100%;"/>
+                        <span style="color: red;font-style: italic"
+                              th:if="${#fields.hasErrors('location')}"
+                              th:errors="*{location}"
+                              th:class="${#fields.hasErrors('location')}?error"
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 30%;">Chủ sự kiện</td>
+                    <td style="width: 70%;">
+                        <input th:field="*{owner}" type="text" style="width: 100%;"/>
+                        <span style="color: red;font-style: italic" th:if="${#fields.hasErrors('owner')}"
+                              th:errors="*{owner}"
+                              th:class="${#fields.hasErrors('owner')}?error"
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 30%;">Người tham dự</td>
+                    <td style="width: 70%;">
+                        <input th:field="*{receiver}" type="text" style="width: 100%;"/>
+                        <span style="color: red;font-style: italic" th:if="${#fields.hasErrors('receiver')}"
+                              th:errors="*{receiver}"
+                              th:class="${#fields.hasErrors('receiver')}?error"
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 30%;">Thời điểm diễn ra sự kiện</td>
+                    <td style="width: 70%;">
+                        <input th:field="*{updateddate}" type="date" style="width: 50%;"/>
+                        <span style="color: red;font-style: italic" th:if="${#fields.hasErrors('updateddate')}"
+                              th:errors="*{updateddate}"
+                              th:class="${#fields.hasErrors('updateddate')}?error"
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 30%;">Thời gian bắt đầu</td>
+                    <td style="width: 70%;">
+                        <input th:field="*{starttime}" type="time" style="width: 30%;"/>
+                        <span style="color: red;font-style: italic" th:if="${#fields.hasErrors('starttime')}"
+                              th:errors="*{starttime}"
+                              th:class="${#fields.hasErrors('starttime')}?error"
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 30%;">Thời gian kết thúc</td>
+                    <td style="width: 70%;">
+                        <input th:field="*{endtime}" type="time" style="width: 30%;"/>
+                        <span style="color: red;font-style: italic" th:if="${#fields.hasErrors('endtime')}"
+                              th:errors="*{endtime}"
+                              th:class="${#fields.hasErrors('endtime')}?error"
+                        />
+                    </td>
+                </tr>
+                <input type="hidden" th:field="*{createddate}"/>
+                <tr>
+                    <td colspan="2" style="text-align:center;">
+                        <button style="padding: 5px 15px;font-size: 15px;">Save</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+
+</div>
+<div class="footer" style="
+        text-align: center;
+    background-color: #e2e2f1;
+    margin: auto;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    ">
+    End Page
+</div>
+
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</body>
+
+</html>
